@@ -310,6 +310,17 @@
 
 
 ## 4. Phase 2 — Database & Backend Foundation
+
+### Session scope 2026-11-01 — foundation tested; deployment in progress
+- User approved rebuilding from current files and commit/push to Pxnzz/FoundIt main for p01. Portal confirmed room1/std04/p01 and saved GitHub URL.
+- Node CommonJS/mysql2 in server.js replaces PHP/PDO under classroom policy; locked spec is unchanged. This does not complete the product or all Phase 2 criteria.
+- Router/envelopes/strict JSON and bounded DB pool implemented. Local HTTP tests: 21 cases passed; wrong DB identity returns generic 503. Syntax passed; npm audit reports zero vulnerabilities.
+- Migration revision 1 accepted by the Database portal (three CREATE TABLE statements). Apply is disabled; owner std04 executed it directly after SELECT DATABASE() verified db_std04_p01 and SHOW TABLES confirmed empty.
+- institutions/users/categories exist; transaction-based constraint/create/read/update tests passed and were rolled back. No seed, deletion, existing-data change or fabricated platform applied history.
+- updated_at must be explicitly assigned by future UPDATE queries. Initial SQL parser compatibility changes preserved required constraints. Accepted SQL is now append-only and ignored by Git.
+- Local env validated privately; managed runtime env inspected and preserved, including its separate DB identity. Auth returns AUTH_NOT_READY; no product E2E acceptance claimed.
+- MCP tools unavailable; authenticated portal used instead. Evidence: docs/phase-2-backend-foundation.md. Deployment/scan/runtime confirmation pending.
+
 ### [ ] P02-01 — ออกแบบ ER Diagram
 - **ทำอะไร:** แสดง Entity, PK/FK, Cardinality และ relationship
 - **ทำที่ไหน:** `docs/erd.md` หรือ `docs/erd.mmd`
@@ -330,7 +341,7 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P02-03 — สร้าง Institutions Schema
+### [/] P02-03 — สร้าง Institutions Schema
 - **ทำอะไร:** สร้างตารางโรงเรียน
 - **ทำที่ไหน:** Migration: `institutions`
 - **ทำอย่างไร:** กำหนด PK, name, code unique, address, active, timestamps, InnoDB/utf8mb4
@@ -340,7 +351,7 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P02-04 — สร้าง Users Schema
+### [/] P02-04 — สร้าง Users Schema
 - **ทำอะไร:** สร้าง users และกฎ member/permission
 - **ทำที่ไหน:** Migration: `users`
 - **ทำอย่างไร:** เพิ่ม fields ตาม Spec; unique email normalized, student_code nullable unique, phone VARCHAR(10), enums; index/FK institution
@@ -350,7 +361,7 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P02-05 — สร้าง Categories Schema
+### [/] P02-05 — สร้าง Categories Schema
 - **ทำอะไร:** สร้างหมวดหมู่
 - **ทำที่ไหน:** Migration: `categories`
 - **ทำอย่างไร:** FK institution; name/slug/description/is_active/sort_order; unique institution+slug
@@ -540,7 +551,7 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P02-24 — ตั้ง PDO Database Layer
+### [/] P02-24 — ตั้ง PDO Database Layer
 - **ทำอะไร:** สร้าง connection และ query handling
 - **ทำที่ไหน:** `backend/config/`, `backend/` database service
 - **ทำอย่างไร:** อ่าน env, PDO exceptions, utf8mb4, prepared statements, transaction helpers
@@ -550,7 +561,7 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P02-25 — สร้าง API Router และ Controller Base
+### [/] P02-25 — สร้าง API Router และ Controller Base
 - **ทำอะไร:** ตั้ง routing และ request lifecycle
 - **ทำที่ไหน:** `backend/public/index.php`, `backend/routes/`, controllers
 - **ทำอย่างไร:** กำหนด method/path, JSON parser, middleware pipeline, 404/405
@@ -560,7 +571,7 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P02-26 — สร้าง Standard Response/Error Handler
+### [/] P02-26 — สร้าง Standard Response/Error Handler
 - **ทำอะไร:** ทำ response format กลาง
 - **ทำที่ไหน:** `backend/` response/error utilities
 - **ทำอย่างไร:** success/error envelope, HTTP status mapping, validation errors, correlation id; production ไม่ส่ง stack trace
@@ -2218,7 +2229,18 @@
 | 3 | ____ | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
 | 4 | 2026-11-01 | GitHub Copilot | P00-01 | อ่านข้อกำหนดครบและสรุปขอบเขต/กฎล็อก/Open Decisions/ข้อขัดแย้ง | `docs/requirements-understanding.md`, `task.md`; อ่าน `spec.md` และ starter เดิม | เริ่ม [/] ก่อนบันทึก; ตรวจ repository แบบ read-only; แยก policy conflicts จาก business rules; ไม่แก้ source/Spec/.env; ตรวจรับแล้วเป็น [x] | HEAD d90963a เริ่ม clean; Spec blob ตรง HEAD e8374dd4910479f3d7e2bb3879575e5de512336a; npm.cmd run check ผ่าน; .env ignored/untracked; checklist 185 occurrences | เสร็จเฉพาะ P00-01; ไม่เริ่ม P00-02 |
 
+| 5 | 2026-11-01 | GitHub Copilot | P02-03/04/05/24/25/26 partial | Router/JSON/DB pool; three schema tables | server.js, package.json, Database portal revision 1, db_std04_p01 | Explicit owner SQL after identity check; no automatic migrations; managed env preserved | 21 HTTP cases, wrong-DB 503, DB constraints/rollback, syntax, audit passed; docs/phase-2-backend-foundation.md | Foundation verified; full task/product acceptance and deploy pending |
+
 ## 21. Current Session Handoff
+### Latest handoff 2026-11-01 - foundation integration
+- Confirmed p01 / Pxnzz/FoundIt main. User authorized commit/push/deploy. Code/schema foundation is tested; broader Phase 2 tasks remain [/] until their full acceptance criteria are checked.
+- Changed server.js, package.json, .gitignore, README.md, task.md; added docs/phase-2-backend-foundation.md. Locked spec.md and frontend are unchanged.
+- Migration revision 1 is stored via portal; institutions/users/categories created by explicit owner SQL on db_std04_p01. Portal Apply disabled, applied-history not updated. Never rerun CREATE blindly; inspect existing schema first. Append future SQL to accepted migration and upload separately, never Git.
+- HTTP 21 scenarios, isolated wrong-DB case, DB constraints/transaction rollback, syntax and npm audit passed. See evidence document for boundaries; no auth/product E2E claim.
+- Local env and managed env verified without exposing credentials; preserve runtime-specific managed DB user. No env save needed.
+- Next: explicit staging/commit/push, portal Git Deploy, scans/job/logs/private URL checks, then record actual result. MCP tools unavailable; authenticated portal available.
+
+### Historical handoff (preserved)
 - **วันที่อัปเดตล่าสุด:** 2026-11-01
 - **Phase ปัจจุบัน:** P00 — Repository Audit & Planning
 - **Task กำลังทำ:** ไม่มี; จบรอบที่ P00-01 ตามคำสั่งทำทีละ Task

@@ -5,9 +5,14 @@
   "description": "FoundIt project p01",
   "type": "commonjs",
   "main": "server.js",
-  "engines": { "node": ">=22.13.0" },
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
     "start": "node server.js",
     "check": "node --check server.js && node --check public/index.js"
+  },
+  "dependencies": {
+    "mysql2": "3.24.6"
   }
 }
