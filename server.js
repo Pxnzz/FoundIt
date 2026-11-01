@@ -206,11 +206,28 @@ server.listen(port, host, () => {
   console.log(`FoundIt listening on port ${port}`);
 });
 
-for (const signal of ['SIGTERM', 'SIGINT']) {
-  process.once(signal, () => {
-    server.close(() => {
-      if (pool) void pool.end();
-    });
-    setTimeout(() => process.exit(0), 5000).unref();
+let stopping = false;
+function shutdown() {
+  if (stopping) return;
+  stopping = true;
+  // Drain HTTP before closing the pool so in-flight queries can finish.
+  const deadline = setTimeout(() => {
+    console.error(JSON.stringify({ event: 'shutdown_timeout' }));
+    process.exit(1);
+  }, 10000);
+  server.close(async (error) => {
+    try {
+      if (error) throw error;
+      if (pool) await pool.end();
+    } catch {
+      console.error(JSON.stringify({ event: 'shutdown_error' }));
+      process.exitCode = 1;
+    } finally {
+      clearTimeout(deadline);
+    }
   });
+}
+
+for (const signal of ['SIGTERM', 'SIGINT']) {
+  process.on(signal, shutdown);
 }

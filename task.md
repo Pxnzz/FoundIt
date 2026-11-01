@@ -59,7 +59,7 @@
 |---|---|---:|---:|---:|---:|
 | P00 | Repository Audit & Planning | 5 | 1 | 0 | 0 |
 | P01 | Foundation & Design System | 18 | 0 | 0 | 0 |
-| P02 | Database & Backend Foundation | 30 | 0 | 0 | 0 |
+| P02 | Database & Backend Foundation | 30 | 0 | 6 | 0 |
 | P03 | Authentication & Account | 28 | 0 | 0 | 0 |
 | P04 | Reports & Search | 15 | 0 | 0 | 0 |
 | P05 | Rule-based Matching | 7 | 0 | 0 | 0 |
@@ -68,7 +68,7 @@
 | P08 | Ownership Verification | 9 | 0 | 0 | 0 |
 | P09 | Cash Recovery | 9 | 0 | 0 | 0 |
 | P10 | Admin Control Center | 17 | 0 | 0 | 0 |
-| P11 | Security & Quality | 17 | 0 | 0 | 0 |
+| P11 | Security & Quality | 17 | 0 | 1 | 0 |
 | P12 | Deployment & Operations | 10 | 0 | 0 | 0 |
 
 > ให้ AI Agent คำนวณตัวเลขจาก Checklist จริงทุกครั้งที่อัปเดต ไม่เดาความคืบหน้า
@@ -311,7 +311,8 @@
 
 ## 4. Phase 2 — Database & Backend Foundation
 
-### Session scope 2026-11-01 — foundation tested; deployment in progress
+### Session scope 2026-11-01 — foundation tested; deployment blocked
+- Follow-up tested: P11-13 shutdown drains HTTP, awaits pool closure, handles repeated signals and emits safe failure/timeout events with nonzero exit. Actual child-process smoke and three controlled-pool cases passed; no schema/CRUD repeat. User MCP JSON created outside Git; Start/Trust/secret entry and tool attachment remain pending.
 - User approved rebuilding from current files and commit/push to Pxnzz/FoundIt main for p01. Portal confirmed room1/std04/p01 and saved GitHub URL.
 - Node CommonJS/mysql2 in server.js replaces PHP/PDO under classroom policy; locked spec is unchanged. This does not complete the product or all Phase 2 criteria.
 - Router/envelopes/strict JSON and bounded DB pool implemented. Local HTTP tests: 21 cases passed; wrong DB identity returns generic 503. Syntax passed; npm audit reports zero vulnerabilities.
@@ -319,7 +320,7 @@
 - institutions/users/categories exist; transaction-based constraint/create/read/update tests passed and were rolled back. No seed, deletion, existing-data change or fabricated platform applied history.
 - updated_at must be explicitly assigned by future UPDATE queries. Initial SQL parser compatibility changes preserved required constraints. Accepted SQL is now append-only and ignored by Git.
 - Local env validated privately; managed runtime env inspected and preserved, including its separate DB identity. Auth returns AUTH_NOT_READY; no product E2E acceptance claimed.
-- MCP tools unavailable; authenticated portal used instead. Evidence: docs/phase-2-backend-foundation.md. Deployment/scan/runtime confirmation pending.
+- MCP tools unavailable; authenticated portal used instead. Evidence: docs/phase-2-backend-foundation.md. Git source structure passed after stricter .gitignore; Semgrep/OSV completed with zero findings, Gitleaks errored tool-diagnostics and gate denied. No runtime release, URL ECONNREFUSED. See evidence for job IDs and the separate empty-Draft manual rescan failure.
 
 ### [ ] P02-01 — ออกแบบ ER Diagram
 - **ทำอะไร:** แสดง Entity, PK/FK, Cardinality และ relationship
@@ -1812,15 +1813,15 @@
 - **ผลทดสอบ/หลักฐาน:** ____
 - **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
 
-### [ ] P11-13 — Error handling and monitoring
+### [/] P11-13 — Error handling and monitoring
 - **ทำอะไร:** Error handling and monitoring
 - **ทำที่ไหน:** Backend/frontend operations
 - **ทำอย่างไร:** Generic public errors; safe internal structured logs; health checks and correlation IDs
 - **ถือว่าเสร็จเมื่อ:** No stack trace/SQL/secret in public response
-- **บันทึกผลการทำงาน:** วันที่: ____ | ผู้ทำ/Agent: ____ | Commit/PR: ____
-- **ไฟล์ที่สร้าง/แก้:** ____
-- **ผลทดสอบ/หลักฐาน:** ____
-- **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
+- **บันทึกผลการทำงาน:** 2026-11-01 | GitHub Copilot | Partial: hardened backend shutdown after foundation review; broader product monitoring remains unaccepted
+- **ไฟล์ที่สร้าง/แก้:** server.js, docs/phase-2-backend-foundation.md, task.md; user MCP config outside repository
+- **ผลทดสอบ/หลักฐาน:** Actual child health/HTML 200 and clean exit 0; controlled-pool success/reject/hang cases passed using real HTTP, not DB E2E; npm check and diff check passed
+- **ปัญหา/สิ่งที่ต้องตัดสินใจ:** Readiness queue deadline remains; no product/runtime acceptance. Deploy blocked by prior Gitleaks tool-diagnostics; MCP Start/Trust/secret entry and tool attachment pending.
 
 ### [ ] P11-14 — Backup and restore security
 - **ทำอะไร:** Backup and restore security
@@ -2229,16 +2230,25 @@
 | 3 | ____ | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
 | 4 | 2026-11-01 | GitHub Copilot | P00-01 | อ่านข้อกำหนดครบและสรุปขอบเขต/กฎล็อก/Open Decisions/ข้อขัดแย้ง | `docs/requirements-understanding.md`, `task.md`; อ่าน `spec.md` และ starter เดิม | เริ่ม [/] ก่อนบันทึก; ตรวจ repository แบบ read-only; แยก policy conflicts จาก business rules; ไม่แก้ source/Spec/.env; ตรวจรับแล้วเป็น [x] | HEAD d90963a เริ่ม clean; Spec blob ตรง HEAD e8374dd4910479f3d7e2bb3879575e5de512336a; npm.cmd run check ผ่าน; .env ignored/untracked; checklist 185 occurrences | เสร็จเฉพาะ P00-01; ไม่เริ่ม P00-02 |
 
-| 5 | 2026-11-01 | GitHub Copilot | P02-03/04/05/24/25/26 partial | Router/JSON/DB pool; three schema tables | server.js, package.json, Database portal revision 1, db_std04_p01 | Explicit owner SQL after identity check; no automatic migrations; managed env preserved | 21 HTTP cases, wrong-DB 503, DB constraints/rollback, syntax, audit passed; docs/phase-2-backend-foundation.md | Foundation verified; full task/product acceptance and deploy pending |
+| 5 | 2026-11-01 | GitHub Copilot | P02-03/04/05/24/25/26 partial | Router/JSON/DB pool; three schema tables | server.js, package.json, Database portal revision 1, db_std04_p01 | Explicit owner SQL after identity check; no automatic migrations; managed env preserved | 21 HTTP cases, wrong-DB 503, DB constraints/rollback, syntax, audit passed; docs/phase-2-backend-foundation.md | Foundation verified; full task/product acceptance pending; Git Deploy blocked by Gitleaks tool-diagnostics, no live release |
+
+| 6 | 2026-11-01 | GitHub Copilot | P11-13 partial | Harden shutdown; configure user MCP | server.js, foundation evidence, task.md; VS Code User mcp.json outside Git | Drain HTTP then await pool; generic error and timeout exit 1; idempotent signals; password prompt only | Actual child smoke passed; three controlled DB/process/timer cases passed; syntax/diff checks; no DB or frontend retest | Backend follow-up tested; MCP attachment and deployment still blocked/pending |
 
 ## 21. Current Session Handoff
+### Follow-up handoff 2026-11-01 - shutdown and MCP
+- P11-13 remains [/] for the wider monitoring scope. Shutdown hardening passed targeted tests; no new auth/CRUD/schema feature and no full product acceptance.
+- New tests and limitations are appended in docs/phase-2-backend-foundation.md; old results remain historical. spec.md and frontend unchanged. No DB queries/mutations or managed env changes in this follow-up.
+- User-level VS Code MCP config created outside repository, valid JSON with a secret password input. Start/trust classroom-student from MCP: List Servers and enter website password in the secret prompt; reload tools if necessary. No classroom tools are currently attached, so no deployment attempted.
+- Prior Git deployment remains blocked at required Gitleaks diagnostics; administrator repair is still needed. Do not disable scans, reset DB or repeat accepted CREATE statements.
+
 ### Latest handoff 2026-11-01 - foundation integration
 - Confirmed p01 / Pxnzz/FoundIt main. User authorized commit/push/deploy. Code/schema foundation is tested; broader Phase 2 tasks remain [/] until their full acceptance criteria are checked.
 - Changed server.js, package.json, .gitignore, README.md, task.md; added docs/phase-2-backend-foundation.md. Locked spec.md and frontend are unchanged.
 - Migration revision 1 is stored via portal; institutions/users/categories created by explicit owner SQL on db_std04_p01. Portal Apply disabled, applied-history not updated. Never rerun CREATE blindly; inspect existing schema first. Append future SQL to accepted migration and upload separately, never Git.
 - HTTP 21 scenarios, isolated wrong-DB case, DB constraints/transaction rollback, syntax and npm audit passed. See evidence document for boundaries; no auth/product E2E claim.
 - Local env and managed env verified without exposing credentials; preserve runtime-specific managed DB user. No env save needed.
-- Next: explicit staging/commit/push, portal Git Deploy, scans/job/logs/private URL checks, then record actual result. MCP tools unavailable; authenticated portal available.
+- Commits 7a623d1 and ebcd480 pushed to main. Git deploy 2b8b1bbd-ff3b-47e1-84a4-2767aa15f100 passed source structure, then blocked at Gitleaks tool-diagnostics (Semgrep/OSV complete, zero findings). No activated release; runtime stopped; URL refused connections. Follow-up manual rescan targeted empty Draft and failed capture, not a scanner retry.
+- Next: platform administrator checks Gitleaks worker diagnostics; preserve required gate. Then retry saved GitHub deployment and verify job/scans/env/runtime/URL. Do not reset DB, rerun applied CREATE statements, or treat auth as complete. MCP tools unavailable; authenticated portal available.
 
 ### Historical handoff (preserved)
 - **วันที่อัปเดตล่าสุด:** 2026-11-01

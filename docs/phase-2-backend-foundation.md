@@ -54,4 +54,31 @@ Independent read-only review found no foundation deployment blocker. Residual lo
 
 ## Deployment
 
-Pending at document creation. Platform scans, job result, private runtime URL and post-deploy checks must be recorded from actual results, not inferred from local tests. MCP classroom tools are unavailable in this session; the authenticated portal is the available platform channel.
+Deployment is BLOCKED, not completed. MCP classroom tools are unavailable; the authenticated portal was used. GitHub link was saved and read back as https://github.com/Pxnzz/FoundIt. User-authorized commits were pushed to main: 7a623d1 (foundation), ebcd480 (stricter ignore rules).
+
+1. Git deploy job 8be0cb18-e2c7-4df2-9687-ebd03a150222 failed during capture with GITIGNORE. Tightened .gitignore by removing the unused .env.example exception and explicitly ignoring node_modules. No source or DB change was needed.
+2. Git deploy job 2b8b1bbd-ff3b-47e1-84a4-2767aa15f100 captured the new GitHub archive with valid structure, including a passing GITIGNORE check and all five source files. It then failed at scan/blocked (WORKER_FAILED). Env revision captured by the job: 1. No release was activated.
+3. Platform Semgrep 1.183.0 and OSV 2.7.0 completed with complete coverage and zero findings. Gitleaks returned status error, reason tool-diagnostics. Gate decision deny, violation tool-incomplete/gitleaks. Zero displayed findings does not mean the incomplete scanner passed. Source hash: b4aeb78f8e71f94a66e3b0cff664afb86822bc9f008332573838f7e350f1b8da; release identity sha256:3aa1cb3762e3f82b5b3632e1ab7aef4769451455ff731988193016519adf9b78.
+4. The portal's manual rescan job 55636453-5885-43c6-b53f-e173387d8046 failed at capture because the project Draft is empty (Git candidate is not the Draft). It did not rerun Gitleaks and does not supersede the Git candidate scan evidence. The latest project_status structure consequently describes that empty Draft, not missing files in the Git repository. Do not use repeated manual rescans to retry this Git candidate.
+5. project_status reports running false, releaseId null, legacyRuntime true. Project logs were available but empty. Actual requests to http://10.200.210.117:31041/, /api/v1/health and /api/v1/health/ready all failed with ECONNREFUSED. No deployed browser/DB integration acceptance is possible yet. Public remains unpublished.
+
+Required continuation: the platform administrator must inspect/fix the Gitleaks worker diagnostics for the Git candidate (not disable the required scanner). After repair, deploy from the saved GitHub URL again, follow the job to completion and verify scans, effective env revision, runtime logs and the actual URL. The three DB tables already exist; do not rerun migration revision 1 or reset data. Managed env requires no known changes. Authentication/product flows remain separate unfinished work, even after foundation deployment succeeds.
+
+## Follow-up 2026-11-01: shutdown hardening
+
+Stage: targeted backend regression, not product integration or production acceptance. Updated server.js to drain HTTP before awaiting pool.end(), handle rejection with a generic shutdown_error event and exit code 1, ignore repeated termination signals, and enforce a 10-second deadline with shutdown_timeout and exit 1. Successful shutdown clears the deadline and exits naturally. This supersedes the shutdown-specific risks in the historical pre-deployment review; the readiness queue deadline remains unresolved.
+
+| Newly run scenario | Expected | Actual |
+|---|---|---|
+| Actual child process: health and HTML, then repeated signal handlers | HTTP 200, clean exit 0, no stderr | Passed |
+| Real HTTP with controlled DB pool: active request during shutdown | Response finishes before pool closure; closure awaited once | Passed |
+| Controlled pool.end rejection | Generic shutdown_error, exitCode 1, no driver detail | Passed |
+| Controlled hanging pool.end | Deadline invokes exit 1 with shutdown_timeout | Passed |
+| Syntax and whitespace | npm run check and git diff --check pass | Passed |
+| User MCP configuration | Valid JSON, HTTP server, password prompt marked secret | Passed configuration checks only; tools not attached |
+
+Failure-path tests ran the current server source in a VM with real HTTP sockets and controlled pool/process/timers (the 10-second deadline accelerated to 200 ms). These are component tests, NOT real DB or OS-signal end-to-end results. The separate unmodified-runtime child smoke invoked the registered signal handlers via process.emit because Windows termination does not reliably deliver POSIX signals. Harness setup failures (PowerShell argument quoting, missing VM URL global, keep-alive client timing) were corrected before the passing runs; no application behavior was changed to bypass assertions. Tests ran in memory without adding executable test files.
+
+No frontend, payload, query or schema change, so historical DB/CRUD/responsive tests were not repeated. No managed env change, migration or deploy attempted in this follow-up. Portal Security still showed Gitleaks tool-diagnostics and deny when inspected; this is not a new scan.
+
+Created VS Code user-level MCP configuration outside the repository at C:/Users/Admin/AppData/Roaming/Code/User/mcp.json, using the confirmed room1/std04 identity and a secret password input, with no stored password. User must start/trust classroom-student and enter their website password in VS Code's secret prompt. JSON validity does not establish tool attachment: classroom_list_projects must become visible and be called before any new deployment. No successful deployment or MCP connection is claimed.
