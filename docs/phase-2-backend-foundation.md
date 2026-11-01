@@ -82,3 +82,35 @@ Failure-path tests ran the current server source in a VM with real HTTP sockets 
 No frontend, payload, query or schema change, so historical DB/CRUD/responsive tests were not repeated. No managed env change, migration or deploy attempted in this follow-up. Portal Security still showed Gitleaks tool-diagnostics and deny when inspected; this is not a new scan.
 
 Created VS Code user-level MCP configuration outside the repository at C:/Users/Admin/AppData/Roaming/Code/User/mcp.json, using the confirmed room1/std04 identity and a secret password input, with no stored password. User must start/trust classroom-student and enter their website password in VS Code's secret prompt. JSON validity does not establish tool attachment: classroom_list_projects must become visible and be called before any new deployment. No successful deployment or MCP connection is claimed.
+
+## Follow-up 2026-11-01: total readiness deadline verified
+
+Stage: targeted backend regression for P11-13, not product integration or deployment acceptance. Owner reconfirmed p01. Live classroom_list_projects and get_github_link verified the project and Pxnzz/FoundIt repository. Earlier MCP-unavailable statements are historical. No new deployment was requested or attempted in this follow-up.
+
+Preserved the unfinished checkDatabaseConnection implementation and validated a single 5000 ms deadline covering pool acquisition plus SELECT DATABASE(). Timely success releases the connection; errors remove it from the pool. Acquisitions delivered after timeout are released without querying. Late query outcomes are consumed without duplicate settlement or cleanup.
+
+Read-only review found that pinned mysql2 3.24.6 destroy() uses stream.end(), which can leave a stalled transport open. The error path now captures the underlying PromisePoolConnection.connection.stream, invokes connection.destroy() to remove it from the pool, then stream.destroy() to close the transport. This depends on the pinned driver's structure and must be rechecked on dependency upgrades.
+
+### Newly executed final-code evidence
+
+| Scenario | Expected | Actual |
+|---|---|---|
+| Timely success | Release once; clear timer | Passed |
+| Synchronous acquisition throw / asynchronous rejection | Controlled rejection; timer cleared | Both passed |
+| Query rejection | Connection and transport destroyed, no release | Passed |
+| Selected DB mismatch | Reject and close transport | Passed |
+| Acquisition timeout, then late success | Release without querying | Passed |
+| Acquisition timeout, then late rejection | Rejection consumed | Passed |
+| Query timeout, then late success / rejection | Destroy once; no release or unhandled rejection | Both passed |
+| Real HTTP stalled readiness and concurrent liveness | Generic 503 DATABASE_UNAVAILABLE, request ID; liveness 200 | Passed |
+| Real HTTP readiness success GET / HEAD | 200, database-connection scope; empty HEAD body | Passed |
+| Actual mysql2 PromiseConnection over stalled local TCP peer | Deadline destroys underlying socket | Passed; socket.destroyed true |
+| Unaccelerated final-code total deadline with 1000 ms acquisition | Fail near 5000 ms total, not 6000 ms; cleanup once | Passed in 5007 ms |
+
+The first twelve scenarios ran the complete current server source in a VM with real HTTP sockets; the deadline was accelerated from 5000 ms to 80 ms. The local TCP test used the installed mysql2 wrapper and a local non-DB peer that did not send a handshake. This validates transport destruction, NOT real database integration or an authenticated database session. No unhandled rejections occurred. The separate real-time test evaluated the current readiness helper with controlled acquisition/query promises and normal timers.
+
+Before transport hardening, eleven component/HTTP scenarios and an unaccelerated 5011 ms run passed; those are preliminary evidence, superseded by the final-code runs above. Terminal PSReadLine produced an input/display exception on the first long command; recovered output confirmed completion. Disabling the session input module and terminating subsequent multiline input correctly restored reliable execution; no assertions were bypassed. Harnesses ran in memory, with no new executable project files.
+
+Local .env completeness and p01 identity were checked without printing credentials or modifying the file. No managed env writes, DB requests, SQL, migrations, seed, frontend/spec changes, commit/push or deployment. Historical real-DB/schema/UI results remain separate and were not rerun because query semantics, schema and frontend behavior are unchanged. This follow-up does not establish real DB E2E, OS-signal behavior, or deployed readiness for the new code.
+
+Residual limitation: timing out does not cancel mysql2's pending acquisition entry. It remains until serviced or pool shutdown; queueLimit 10 bounds queued entries. Late delivered connections are released. The five-second response deadline is subject to normal Node event-loop scheduling. P11-13 stays [/] for wider monitoring and product acceptance.

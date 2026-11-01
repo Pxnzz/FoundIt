@@ -1818,10 +1818,10 @@
 - **ทำที่ไหน:** Backend/frontend operations
 - **ทำอย่างไร:** Generic public errors; safe internal structured logs; health checks and correlation IDs
 - **ถือว่าเสร็จเมื่อ:** No stack trace/SQL/secret in public response
-- **บันทึกผลการทำงาน:** 2026-11-01 | GitHub Copilot | Partial: hardened backend shutdown after foundation review; broader product monitoring remains unaccepted
-- **ไฟล์ที่สร้าง/แก้:** server.js, docs/phase-2-backend-foundation.md, task.md; user MCP config outside repository
-- **ผลทดสอบ/หลักฐาน:** Actual child health/HTML 200 and clean exit 0; controlled-pool success/reject/hang cases passed using real HTTP, not DB E2E; npm check and diff check passed
-- **ปัญหา/สิ่งที่ต้องตัดสินใจ:** Readiness queue deadline remains; no product/runtime acceptance. Deploy blocked by prior Gitleaks tool-diagnostics; MCP Start/Trust/secret entry and tool attachment pending.
+- **บันทึกผลการทำงาน:** 2026-11-01 | GitHub Copilot | Partial: shutdown hardening plus total readiness deadline verified; broader product monitoring remains unaccepted
+- **ไฟล์ที่สร้าง/แก้:** server.js, docs/phase-2-backend-foundation.md, task.md; earlier user MCP config outside repository
+- **ผลทดสอบ/หลักฐาน:** Earlier shutdown evidence retained. New: 12 final-code controlled-pool/real-HTTP/local-TCP scenarios passed, no unhandled rejections; actual 5-second timer completed in 5007 ms including 1000 ms acquisition. See foundation evidence for boundaries.
+- **ปัญหา/สิ่งที่ต้องตัดสินใจ:** Readiness follow-up verified locally, not deployed; full product monitoring remains pending. MCP list_projects and saved GitHub link verified in this session; older MCP/Gitleaks blockers below are historical. Timed-out acquisition remains queued until serviced, bounded by queueLimit 10.
 
 ### [ ] P11-14 — Backup and restore security
 - **ทำอะไร:** Backup and restore security
@@ -2234,7 +2234,22 @@
 
 | 6 | 2026-11-01 | GitHub Copilot | P11-13 partial | Harden shutdown; configure user MCP | server.js, foundation evidence, task.md; VS Code User mcp.json outside Git | Drain HTTP then await pool; generic error and timeout exit 1; idempotent signals; password prompt only | Actual child smoke passed; three controlled DB/process/timer cases passed; syntax/diff checks; no DB or frontend retest | Backend follow-up tested; MCP attachment and deployment still blocked/pending |
 
+| 7 | 2026-11-01 | GitHub Copilot | P11-13 partial | Finish readiness deadline and hard transport cleanup | server.js, docs/phase-2-backend-foundation.md, task.md | One total acquisition/query deadline; late connection release; pinned mysql2 stream destruction on failure | 12 final-code controlled-pool/HTTP/local-TCP scenarios passed; real timer 5007 ms; no real DB requests, schema/env changes or deployment | Readiness follow-up verified locally; broader task remains [/] |
+
 ## 21. Current Session Handoff
+### Verified follow-up 2026-11-01 - P11-13 readiness deadline
+- Owner reconfirmed p01; live classroom_list_projects and saved GitHub link match Pxnzz/FoundIt main. Preserved pre-existing server.js/task.md changes.
+- Total 5-second readiness deadline now covers acquisition and query. Failed acquired connections are removed from the pool and their underlying transport is destroyed; late acquisitions are released without querying and late query outcomes are consumed safely.
+- Final code passed 12 targeted scenarios with controlled pools, real HTTP sockets and one actual mysql2 wrapper over a stalled local TCP peer. A separate unaccelerated timer passed in 5007 ms including 1000 ms acquisition. These are NOT real DB/product E2E tests.
+- No frontend/spec/schema/migration changes, real DB requests, env writes, commit/push or deployment. Current local env was validated privately and preserved. The previously running release does not include these uncommitted changes.
+- Next: retain P11-13 [/] for broader product monitoring; deploy this follow-up only when requested, with fresh policy/backend/env/job/runtime checks. Recheck pinned mysql2 transport cleanup if the dependency is upgraded. Historical handoffs below remain intact.
+
+### Resumed session 2026-11-01 - P11-13 readiness deadline in progress
+- Owner reconfirmed p01 / Pxnzz/FoundIt main. Read all spec/tracker/docs and audited existing source before edits; baseline b9fe1cd clean, syntax/diff checks passed, locked spec blob unchanged.
+- P11-13 remains [/]. Scope: bound readiness pool acquisition plus query, safely dispose of late results, and run targeted component/HTTP regression. No auth, schema, migration, frontend redesign or deployment in this scope.
+- Attached classroom tools now work. Fresh project_status confirms running=true, successful job eeba67b4-a24b-4d92-bbc3-f899fc2a3f05, release 7736021b720b2b69abacd0a68d5947e0e4e9f71575cd39cc771b57f8cb54d9e3, env revision 1. Saved GitHub link matches workspace. Earlier deployment-blocked handoffs are historical, not current.
+- Current policy revision 3; scanners are off, not evidence of a clean scan. Preserve all historical test boundaries and accepted SQL; do not repeat CREATE statements.
+
 ### Follow-up handoff 2026-11-01 - shutdown and MCP
 - P11-13 remains [/] for the wider monitoring scope. Shutdown hardening passed targeted tests; no new auth/CRUD/schema feature and no full product acceptance.
 - New tests and limitations are appended in docs/phase-2-backend-foundation.md; old results remain historical. spec.md and frontend unchanged. No DB queries/mutations or managed env changes in this follow-up.
