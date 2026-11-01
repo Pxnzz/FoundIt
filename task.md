@@ -57,32 +57,34 @@
 ## 1. ภาพรวมความคืบหน้า
 | Phase | หัวข้อ | งานทั้งหมด | เสร็จ | กำลังทำ | ติดปัญหา |
 |---|---|---:|---:|---:|---:|
-| P00 | Repository Audit & Planning | — | — | — | — |
-| P01 | Foundation & Design System | — | — | — | — |
-| P02 | Database & Backend Foundation | — | — | — | — |
-| P03 | Authentication & Account | — | — | — | — |
-| P04 | Reports & Search | — | — | — | — |
-| P05 | Rule-based Matching | — | — | — | — |
-| P06 | AI Image Matching | — | — | — | — |
-| P07 | Claim System | — | — | — | — |
-| P08 | Ownership Verification | — | — | — | — |
-| P09 | Cash Recovery | — | — | — | — |
-| P10 | Admin Control Center | — | — | — | — |
-| P11 | Security & Quality | — | — | — | — |
-| P12 | Deployment & Operations | — | — | — | — |
+| P00 | Repository Audit & Planning | 5 | 1 | 0 | 0 |
+| P01 | Foundation & Design System | 18 | 0 | 0 | 0 |
+| P02 | Database & Backend Foundation | 30 | 0 | 0 | 0 |
+| P03 | Authentication & Account | 28 | 0 | 0 | 0 |
+| P04 | Reports & Search | 15 | 0 | 0 | 0 |
+| P05 | Rule-based Matching | 7 | 0 | 0 | 0 |
+| P06 | AI Image Matching | 9 | 0 | 0 | 0 |
+| P07 | Claim System | 11 | 0 | 0 | 0 |
+| P08 | Ownership Verification | 9 | 0 | 0 | 0 |
+| P09 | Cash Recovery | 9 | 0 | 0 | 0 |
+| P10 | Admin Control Center | 17 | 0 | 0 | 0 |
+| P11 | Security & Quality | 17 | 0 | 0 | 0 |
+| P12 | Deployment & Operations | 10 | 0 | 0 | 0 |
 
 > ให้ AI Agent คำนวณตัวเลขจาก Checklist จริงทุกครั้งที่อัปเดต ไม่เดาความคืบหน้า
+> อัปเดต 2026-11-01: นับ heading Pxx-xx ตามจำนวนรายการจริง ไม่รวม Inventory/WF/DoD; รวม 185 รายการ เสร็จ 1 รายการ; P03 มี ID ซ้ำจึงยังไม่ใช่จำนวน unique deliverables และไม่ลบ/รวมรายการเอง
 
 ## 2. Phase 0 — ตรวจสอบ Repository และวางแผน
-### [ ] P00-01 — อ่านข้อกำหนดทั้งหมด
+### [x] P00-01 — อ่านข้อกำหนดทั้งหมด
 - **ทำอะไร:** อ่าน `spec.md` ทั้งไฟล์และแปลงเป็นความเข้าใจร่วมก่อนเริ่มพัฒนา
 - **ทำที่ไหน:** Root: `spec.md`, `task.md`
 - **ทำอย่างไร:** อ่านทุกหัวข้อ ตั้งแต่ Product Overview, Screen, DB, API, AI, Security, Roadmap และ Open Points; สรุป Locked Rules กับ Open Decisions
 - **ถือว่าเสร็จเมื่อ:** สรุปขอบเขตและข้อห้ามได้ครบ ไม่มีการตีความเปลี่ยนกฎ
-- **บันทึกผลการทำงาน:** วันที่: ____ | ผู้ทำ/Agent: ____ | Commit/PR: ____
-- **ไฟล์ที่สร้าง/แก้:** ____
-- **ผลทดสอบ/หลักฐาน:** ____
-- **ปัญหา/สิ่งที่ต้องตัดสินใจ:** ____
+- **บันทึกผลการทำงาน:** เริ่ม 2026-11-01 | Agent: GitHub Copilot | แผน: สรุปขอบเขต Locked Rules/Open Decisions และข้อขัดแย้งกับ policy โดยไม่แก้ spec.md หรือ application | Commit/PR: ยังไม่มี
+- **ผลตรวจรับ 2026-11-01:** อ่าน Spec 0–19 และ Tracker 0–22 ครบ; สรุปขอบเขต กฎล็อก Open Decisions 12 เรื่อง และข้อขัดแย้งโดยไม่ตัดสินใจแทนผู้ใช้; เสร็จเฉพาะงานอ่าน/สรุป ไม่ได้อนุมัติ stack หรือ implementation
+- **ไฟล์ที่สร้าง/แก้:** สร้าง `docs/requirements-understanding.md`; แก้ `task.md` เฉพาะสถานะ/สรุป/Work Log/Handoff; ไม่แก้ `spec.md`, application หรือ `.env`
+- **ผลทดสอบ/หลักฐาน:** อ่านและตรวจเทียบทุกส่วนตามรายงาน; Spec Git blob เท่ากับ HEAD: `e8374dd4910479f3d7e2bb3879575e5de512336a`; `npm.cmd run check` ผ่าน; `.env` ถูก ignore และไม่อยู่ใน tracked files; นับ Task heading จริง 185 occurrences (รวม ID ซ้ำ)
+- **ปัญหา/สิ่งที่ต้องตัดสินใจ:** Spec PHP/PDO/MySQL/FastAPI ขัด policy Node CommonJS/5 application files/MariaDB; migration runner และ private storage ต้องยืนยันแนวทาง; P03 ID ซ้ำยังไม่แก้; ไม่บล็อกการอ่านแต่บล็อก implementation ที่เกี่ยวข้อง
 
 ### [ ] P00-02 — สำรวจ Repository ปัจจุบัน
 - **ทำอะไร:** ตรวจไฟล์และโค้ดที่มีอยู่ก่อนสร้างหรือแก้ไข
@@ -2214,17 +2216,20 @@
 | 1 | ____ | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
 | 2 | ____ | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
 | 3 | ____ | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
+| 4 | 2026-11-01 | GitHub Copilot | P00-01 | อ่านข้อกำหนดครบและสรุปขอบเขต/กฎล็อก/Open Decisions/ข้อขัดแย้ง | `docs/requirements-understanding.md`, `task.md`; อ่าน `spec.md` และ starter เดิม | เริ่ม [/] ก่อนบันทึก; ตรวจ repository แบบ read-only; แยก policy conflicts จาก business rules; ไม่แก้ source/Spec/.env; ตรวจรับแล้วเป็น [x] | HEAD d90963a เริ่ม clean; Spec blob ตรง HEAD e8374dd4910479f3d7e2bb3879575e5de512336a; npm.cmd run check ผ่าน; .env ignored/untracked; checklist 185 occurrences | เสร็จเฉพาะ P00-01; ไม่เริ่ม P00-02 |
 
 ## 21. Current Session Handoff
-- **วันที่อัปเดตล่าสุด:** ยังไม่มี
-- **Phase ปัจจุบัน:** ยังไม่เริ่ม
-- **Task กำลังทำ:** ไม่มี
-- **Task เสร็จและตรวจรับแล้ว:** ไม่มี
-- **Task ติดปัญหา:** ไม่มี
-- **ไฟล์ที่เปลี่ยนล่าสุด:** ยังไม่มี
-- **คำสั่งทดสอบล่าสุดและผล:** ยังไม่มี
-- **สิ่งที่ต้องทำต่อ:** P00-01 — อ่าน spec.md และตรวจ Repository
-- **คำถามที่ต้องถามผู้ใช้:** ถามเฉพาะ Open Points ที่จำเป็นต่อการตัดสินใจ
+- **วันที่อัปเดตล่าสุด:** 2026-11-01
+- **Phase ปัจจุบัน:** P00 — Repository Audit & Planning
+- **Task กำลังทำ:** ไม่มี; จบรอบที่ P00-01 ตามคำสั่งทำทีละ Task
+- **Task เสร็จและตรวจรับแล้ว:** P00-01 — อ่านข้อกำหนดทั้งหมด; หลักฐานใน `docs/requirements-understanding.md`
+- **Task ติดปัญหา:** ยังไม่มี Task ที่เริ่มแล้วเป็น [!]; พบ conflict บล็อก implementation PHP/PDO/MySQL/FastAPI/โครงสร้าง source/migration/private storage ต้องยืนยันก่อนลงมือส่วนที่เกี่ยวข้อง
+- **ไฟล์ที่เปลี่ยนล่าสุด:** สร้าง `docs/requirements-understanding.md`, แก้ `task.md`; ไม่มี commit ใหม่; ไม่แตะ `.env`, application และ `spec.md`
+- **คำสั่งทดสอบล่าสุดและผล:** `npm.cmd run check` ผ่าน syntax; `git check-ignore .env` ผ่าน; `git ls-files` ไม่มี .env; `git hash-object spec.md` ตรง `git rev-parse HEAD:spec.md`; ไม่ได้รัน DB/UI/E2E/scanners และยังไม่ Deploy
+- **สิ่งที่ต้องทำต่อ:** อ่าน spec.md/task.md ครบและตรวจ Git ใหม่ แล้วเริ่ม P00-02 โดยเปลี่ยน [ ] เป็น [/]; รายงานสำรวจละเอียดก่อน P00-03/P00-04/P00-05; ห้ามถือว่าการสำรวจเบื้องต้นรอบนี้ทำ Task เหล่านั้นเสร็จแล้ว
+- **คำถามที่ต้องถามผู้ใช้:** จะใช้แนวทางใดแก้ข้อขัดแย้ง Locked Spec กับ policy ห้อง โดยห้ามฝ่าฝืน policy และห้ามแก้ Spec เอง? การปรับ Spec/Stack ต้องมีคำสั่งชัดเจน; canonical P03 IDs ต้องรออนุมัติก่อนรวม/เปลี่ยน
+- **บริบทสำหรับ Session ถัดไป:** โปรเจกต์ p01 ยืนยันแล้ว พอร์ต 31041, DB db_std04_p01/user std04; ห้ามใช้ legacy หรือเดาค่าลับ; .env ถูกผู้ใช้แก้ก่อน Session นี้ ไม่อ่านหรือเปลี่ยนในงานเอกสาร; rg ไม่มีในเครื่อง ใช้ PowerShell/ค้นหาไฟล์แทน; npm.cmd หลีกเลี่ยงปัญหา execution policy
+- **ประวัติ Handoff ก่อนหน้า (เก็บไว้):** วันที่ยังไม่มี; Phase ยังไม่เริ่ม; Task ทำ/เสร็จ/ติดปัญหาไม่มี; ไฟล์/ผลทดสอบยังไม่มี; Next เดิม P00-01 อ่าน spec.md และตรวจ Repository; ถามเฉพาะ Open Points ที่จำเป็น
 
 ## 22. คำสั่งเริ่มงานสำหรับ AI Agent
 ```text
